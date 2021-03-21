@@ -59,65 +59,54 @@ package_loader = PackageLoader(packages.get_all_items())
 truck_1.time = '08:00'
 truck_2.time = '09:05'
 
-# Loads trucks.
-package_loader.load_truck(truck_1, truck_1.time)
-package_loader.load_truck(truck_2, truck_2.time)
+# Delivers all packages in inventory
+while package_loader.inventory_amount > 0:
+    # Loads trucks.
+    package_loader.load_truck(truck_1, truck_1.time)
+    package_loader.load_truck(truck_2, truck_2.time)
 
-# Delivers packages on truck 1.
-while truck_1.packages.count(None) < len(truck_1.packages):
-    next_location = None
-    package_address = None
-    for package in truck_1.packages:
-        if package is not None:
-            package_address = package.address
-            break
+    # Delivers packages on truck 1.
+    while truck_1.packages.count(None) < len(truck_1.packages):
+        next_location = None
+        package_address = None
+        for package in truck_1.packages:
+            if package is not None:
+                package_address = package.address
+                break
 
-    for location in area_map.adjacency_list.keys():
-        if location.address == package_address:
-            next_location = location
-            break
+        for location in area_map.adjacency_list.keys():
+            if location.address == package_address:
+                next_location = location
+                break
 
-    truck_1.travel_path(area_map, area_map.find_path(truck_1.current_location, next_location))
+        truck_1.travel_path(area_map, area_map.find_path(truck_1.current_location, next_location))
+    # Returns truck 1 to Hub.
+    truck_1.travel_path(area_map, area_map.find_path_to_center(truck_1.current_location))
 
-# Delivers packages on truck 2.
-while truck_2.packages.count(None) < len(truck_2.packages):
-    next_location = None
-    package_address = None
-    for package in truck_2.packages:
-        if package is not None:
-            package_address = package.address
-            break
+    # Delivers packages on truck 2.
+    while truck_2.packages.count(None) < len(truck_2.packages):
+        next_location = None
+        package_address = None
+        for package in truck_2.packages:
+            if package is not None:
+                package_address = package.address
+                break
 
-    for location in area_map.adjacency_list.keys():
-        if location.address == package_address:
-            next_location = location
-            break
+        for location in area_map.adjacency_list.keys():
+            if location.address == package_address:
+                next_location = location
+                break
 
-    truck_2.travel_path(area_map, area_map.find_path(truck_2.current_location, next_location))
-# Returns truck 2 to Hub.
-truck_2.travel_path(area_map, area_map.find_path_to_center(truck_2.current_location))
-
-# Loads truck 2.
-package_loader.load_truck(truck_2, truck_2.time)
-
-# Delivers packages on truck 2.
-while truck_2.packages.count(None) < len(truck_2.packages):
-    next_location = None
-    package_address = None
-    for package in truck_2.packages:
-        if package is not None:
-            package_address = package.address
-            break
-
-    for location in area_map.adjacency_list.keys():
-        if location.address == package_address:
-            next_location = location
-            break
-
-    truck_2.travel_path(area_map, area_map.find_path(truck_2.current_location, next_location))
+        truck_2.travel_path(area_map, area_map.find_path(truck_2.current_location, next_location))
+    # Returns truck 2 to Hub.
+    truck_2.travel_path(area_map, area_map.find_path_to_center(truck_2.current_location))
 
 # Prints total miles to deliver the packages
 print('Total miles traveled:', truck_1.miles_traveled + truck_2.miles_traveled)
+
+#Prints time of return at the end of deliveries
+print('Truck 1:', truck_1.time)
+print('Truck 2:', truck_2.time)
 
 # Creates interface to check the packages
 user_input = 0
